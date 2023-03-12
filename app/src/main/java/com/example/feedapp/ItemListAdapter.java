@@ -8,13 +8,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
-    private List<Item> items;
+public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemViewHolder> {
 
-    public ItemAdapter(List<Item> items) {
+    private List<Item> items = new ArrayList<>();
+
+    public void setItems(List<Item> items) {
         this.items = items;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -28,7 +32,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         Item item = items.get(position);
         holder.nameTextView.setText(item.getName());
-        holder.idTextView.setText(String.valueOf(item.getId()));
+        holder.idTextView.setText(String.format(Locale.getDefault(), "List ID: %d", item.getListId()));
     }
 
     @Override
@@ -36,19 +40,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return items.size();
     }
 
-    public void setItems(List<Item> items) {
-        this.items = items;
-        notifyDataSetChanged();
-    }
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        public TextView nameTextView;
+        public TextView idTextView;
 
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView;
-        TextView idTextView;
-
-        ItemViewHolder(@NonNull View itemView) {
-            super(itemView);
-            nameTextView = itemView.findViewById(R.id.item_name);
-            idTextView = itemView.findViewById(R.id.item_id);
+        public ItemViewHolder(View view) {
+            super(view);
+            nameTextView = view.findViewById(R.id.item_name);
+            idTextView = view.findViewById(R.id.item_id);
         }
     }
 }
