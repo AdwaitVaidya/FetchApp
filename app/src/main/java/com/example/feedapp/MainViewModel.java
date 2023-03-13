@@ -35,7 +35,7 @@ public class MainViewModel extends ViewModel {
                             filteredItemsList.add(item);
                         }
                     }
-                    Map<Integer, List<Item>> groupedItemsMap = groupItemsByListId(filteredItemsList);
+                    Map<Integer, List<Item>> groupedItemsMap = groupItemsById(filteredItemsList);
                     List<Item> finalItemsList = flattenGroupedItemsMap(groupedItemsMap);
                     items.setValue(finalItemsList);
                 }
@@ -48,14 +48,14 @@ public class MainViewModel extends ViewModel {
         });
     }
 
-    private Map<Integer, List<Item>> groupItemsByListId(List<Item> items) {
+    private Map<Integer, List<Item>> groupItemsById(List<Item> items) {
         Map<Integer, List<Item>> groupedItemsMap = new TreeMap<>();
         for (Item item : items) {
-            int listId = item.getListId();
-            List<Item> group = groupedItemsMap.get(listId);
+            int id = item.getId();
+            List<Item> group = groupedItemsMap.get(id);
             if (group == null) {
                 group = new ArrayList<>();
-                groupedItemsMap.put(listId, group);
+                groupedItemsMap.put(id, group);
             }
             group.add(item);
         }
@@ -69,11 +69,17 @@ public class MainViewModel extends ViewModel {
             Collections.sort(group, new Comparator<Item>() {
                 @Override
                 public int compare(Item o1, Item o2) {
-                    if (o1.getListId() == o2.getListId()) {
-                        return o1.getName().compareTo(o2.getName());
+                    if (o1.getId() == o2.getId()) {
+                        if (o1.getListId() == o2.getListId()) {
+                            return o1.getName().compareTo(o2.getName());
+                        } else {
+                            return Integer.compare(o1.getListId(), o2.getListId());
+                        }
                     } else {
-                        return Integer.compare(o1.getListId(), o2.getListId());
+                        return Integer.compare(o1.getId(), o2.getId());
                     }
+
+
                 }
             });
             flattenedList.addAll(group);
